@@ -84,9 +84,9 @@ def getTitleYear(code):
         data = f.read().decode('utf-8')
 
         soup = bs4.BeautifulSoup(re.sub("&#(?![0-9])", "", data), "html.parser")
-        title_kr = soup.select('.mv_info_area')[0].find_all('h3', class_='h_movie')[0].text.strip
-        movie_year = soup.select('.mv_info_area')[0].find_all('strong', class_='h_movie2')[0].text.split(',')[-1].strip
-        title_en = ','.join(soup.select('.mv_info_area')[0].find_all('strong', class_='h_movie2')[0].text.split(',')[0:-1]).strip
+        title_kr = soup.select('.mv_info_area')[0].find_all('h3', class_='h_movie')[0].text.strip()
+        movie_year = soup.select('.mv_info_area')[0].find_all('strong', class_='h_movie2')[0].text.split(',')[-1].strip()
+        title_en = ','.join(soup.select('.mv_info_area')[0].find_all('strong', class_='h_movie2')[0].text.split(',')[0:-1]).strip()
     except :
         print(traceback.format_stack())
 
@@ -95,7 +95,21 @@ def getTitleYear(code):
 
 
 def fetch_movie_info(i):
-    getTitleYear(i)
+    outname = 'info/%d.txt' % i
+    try:
+        if os.stat(outname).st_size > 0 :
+            return #이미 존재하면 아무것도 안한다
+    except:
+        None
+
+    title_kr, title_en, year = getTitleYear(i)
+
+    f = open(outname, 'w', encoding='utf-8')
+    f.write("INSERT INTO movie VALUES ('%s','%s','%s'); " % (title_kr, title_en, year))
+    f.write('\n')
+    f.close()
+    time.sleep(1)
+
 
 def fetch(i):
     outname = 'comments/%d.txt' % i
