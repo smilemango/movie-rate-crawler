@@ -98,6 +98,7 @@ def fetch_movie_info(i):
     outname = 'info/%d.txt' % i
     try:
         if os.stat(outname).st_size > 0 :
+            print("file alread exist.")
             return #이미 존재하면 아무것도 안한다
     except:
         None
@@ -120,7 +121,7 @@ def fetch(i):
     rs = getComments(i)
     if not len(rs): return
     f = open(outname, 'w', encoding='utf-8')
-    f.write('INSERT IGNORE INTO movie VALUES ')
+    f.write('INSERT INTO comments VALUES ')
     for idx, r in enumerate(rs):
         if idx: f.write(',\n')
         f.write("(%d,%s,%s,'%s')" % (i, r[0], r[1], r[2].replace("'", "''").replace("\\", "\\\\")))
@@ -129,13 +130,12 @@ def fetch(i):
     time.sleep(1)
 
 
-# with ThreadPoolExecutor(max_workers=5) as executor:
-#     # 영화 고유 ID값의 범위를 몰라서 대략 아래처럼 잡았습니다.
-#     for i in range(10000, 10005):
-#         executor.submit(fetch, i)
-
-
 with ThreadPoolExecutor(max_workers=5) as executor:
-    for i in range(10000, 20000):
-        executor.submit(fetch_movie_info,i)
+    for i in range(121048, 121049):
+        executor.submit(fetch, i)
+
+
+# with ThreadPoolExecutor(max_workers=1) as executor:
+#     for i in range(121048, 121049):
+#         executor.submit(fetch_movie_info,i)
 
